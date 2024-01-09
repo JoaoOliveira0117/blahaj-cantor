@@ -3,9 +3,13 @@ const { Events } = require("discord.js")
 const client = require("../services/discord")
 const onMessage = require('./events/onMessage')
 const initCommands = require('./commands/index')
+const initPlayer = require('../services/player')
+
+const { INTERACTION_NOT_DEFERED_NOR_REPLIED } = require('../utils/errorMessages');
 
 module.exports = {
-    init: () => {
+    init: async () => {
+        await initPlayer()
         onMessage(client)
         initCommands(client)
         client.on(Events.InteractionCreate, async interaction => {
@@ -21,11 +25,10 @@ module.exports = {
             try {
                 await command.execute(interaction);
             } catch (error) {
-                console.error(error);
                 if (interaction.replied || interaction.deferred) {
-                    await interaction.followUp({ content: 'There was an error while executing this command!', ephemeral: true });
+                    await interaction.followUp({ content: INTERACTION_NOT_DEFERED_NOR_REPLIED, ephemeral: true });
                 } else {
-                    await interaction.reply({ content: 'There was an error while executing this command!', ephemeral: true });
+                    await interaction.reply({ content: INTERACTION_NOT_DEFERED_NOR_REPLIED, ephemeral: true });
                 }
             }
         });
