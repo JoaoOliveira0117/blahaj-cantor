@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "nodemon",
     "run:scripts": "node ./src/scripts/deploy-commands.js",
-    "start": "run:scripts && src/index.js"
+    "start": "yarn run:scripts && node ./src/index.js"
   },
   "author": "jopedev",
   "license": "ISC",
