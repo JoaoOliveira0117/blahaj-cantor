@@ -16,7 +16,7 @@ Personal discord music bot
 ### `.env` file example:
 
 ```yml
-APP_PORT=3000
+PORT=3000
 CLIENT_ID={YOUR_CLIENT_ID}
 PUBLIC_ID={YOUR_PUBLIC_ID}
 BOT_TOKEN={BOT_TOKEN_VALUE}
