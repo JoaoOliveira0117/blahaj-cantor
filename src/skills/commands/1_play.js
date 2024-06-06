@@ -2,6 +2,8 @@ const { SlashCommandBuilder } = require('discord.js')
 const { QueryType } = require('discord-player');
 const createSkill = require('../../helpers/createSkill')
 const { QUEUE_AND_URL_NOT_FOUND, QUEUE_EXISTS_URL_NOT_FOUND, ADDED_TO_QUEUE } = require('../../utils/errorMessages');
+const { createAudioPlayer, joinVoiceChannel, createAudioResource, AudioPlayerStatus } = require('@discordjs/voice');
+const ytdl = require('ytdl-core');
 
 module.exports = {
     data: new SlashCommandBuilder()
@@ -9,7 +11,7 @@ module.exports = {
         .setDescription('Inicia a revolução adicionando a música à fila')
         .addStringOption(o => o.setName("url").setDescription("Link da música ( Youtube )").setRequired(false)),
     execute: async (interaction) => createSkill(interaction, 
-        async (queue, player, hasQueue) => {
+        async (queue, _player, hasQueue) => {
             await interaction.deferReply();
             
             const urlObject = interaction.options.get('url', false);
@@ -23,27 +25,31 @@ module.exports = {
                 queue.node.setPaused(false)
                 return QUEUE_EXISTS_URL_NOT_FOUND
             }
-            
-            const result = await player.search(url, {
-                requestedBy: interaction.user,
-                searchEngine: QueryType.YOUTUBE_VIDEO
+
+            const player = createAudioPlayer()
+
+            const connection = joinVoiceChannel({
+                channelId: interaction.member.voice.channel.id,
+                guildId: interaction.guild.id,
+                adapterCreator: interaction.guild.voiceAdapterCreator,
             })
 
-            const track = result.tracks[0]
+            connection.subscribe(player)
 
-            await queue.addTrack(track)
+            const stream = ytdl(url, { filter: 'audioonly' })
+            const resource = createAudioResource(stream)
 
-            queue.setMetadata(interaction)
+            player.play(resource)
 
-            if(!queue.connection) {
-                await queue.connect(interaction.member.voice.channel)
-            }
+            player.on(AudioPlayerStatus.Playing, () => {
+                console.log('The bot is now playing!');
+            });
 
-            if(!queue.isPlaying()) {
-                await queue.node.play()
-            }
+            player.on('error', error => {
+                console.error('Error:', error.message);
+            });
 
-            return ADDED_TO_QUEUE(track)
+            return "uau"
         }
         , true),
 }
