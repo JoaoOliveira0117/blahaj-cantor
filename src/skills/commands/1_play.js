@@ -23,12 +23,12 @@ module.exports = {
                 queue.node.setPaused(false)
                 return QUEUE_EXISTS_URL_NOT_FOUND
             }
-        
+            
             const result = await player.search(url, {
                 requestedBy: interaction.user,
                 searchEngine: QueryType.YOUTUBE_VIDEO
             })
-    
+
             const track = result.tracks[0]
 
             await queue.addTrack(track)

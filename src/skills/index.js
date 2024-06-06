@@ -28,6 +28,7 @@ module.exports = {
                 } else {
                     await interaction.reply({ content: INTERACTION_NOT_DEFERED_NOR_REPLIED, ephemeral: true });
                 }
+                console.log(error)
             }
         });
         client.login(process.env.BOT_TOKEN)
