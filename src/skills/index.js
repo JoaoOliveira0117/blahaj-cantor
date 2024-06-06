@@ -1,7 +1,6 @@
 const { Events } = require("discord.js")
 
 const client = require("../services/discord")
-const onMessage = require('./events/onMessage')
 const initCommands = require('./commands/index')
 const initPlayer = require('../services/player')
 
@@ -10,7 +9,6 @@ const { INTERACTION_NOT_DEFERED_NOR_REPLIED } = require('../utils/errorMessages'
 module.exports = {
     init: async () => {
         await initPlayer()
-        onMessage(client)
         initCommands(client)
         client.on(Events.InteractionCreate, async interaction => {
             if (!interaction.isChatInputCommand()) return;

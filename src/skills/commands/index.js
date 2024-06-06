@@ -3,7 +3,7 @@ const fs = require('fs');
 
 const files = fs.readdirSync(__dirname).filter(file => file.endsWith('.js') && file !== 'index.js')
 
-module.exports = (client) => {
+const setupCommands = (client) => {
     client.commands = new Collection()
 
     for (const file of files) {
@@ -17,3 +17,5 @@ module.exports = (client) => {
         client.commands.set(command.data.name, command)
     }
 }
+
+module.exports = setupCommands
